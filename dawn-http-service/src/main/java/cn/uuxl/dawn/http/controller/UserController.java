@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         logger.info("HTTP层：接收到查询用户请求，ID: {}", id);
         User user = userService.getUserById(id);
         if (user != null) {

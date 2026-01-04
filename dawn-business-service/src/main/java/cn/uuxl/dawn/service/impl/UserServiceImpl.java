@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectAll();
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(Integer id) {
         logger.info("业务层：根据ID查询用户，ID: {}", id);
         return userMapper.selectById(id);
     }
