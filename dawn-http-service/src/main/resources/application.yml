@@ -15,3 +15,13 @@ mybatis:
 
 logging:
   config: classpath:logback.xml
+
+management:
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
