@@ -1,0 +1,17 @@
+# 本地测试环境配置
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:sqlite:./database/dawn.db
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 20
+      #thread-factory: java.util.concurrent.ThreadFactory
+
+# 本地开发时显示详细SQL日志
+logging:
+  level:
+    cn.uuxl.dawn: DEBUG
+    org.springframework.jdbc.datasource: DEBUG

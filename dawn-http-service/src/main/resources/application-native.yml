@@ -1,0 +1,17 @@
+# 线上生产环境配置
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:sqlite:/app/data/prod/dawn.db
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 50
+      #thread-factory: java.util.concurrent.ThreadFactory
+
+# 生产环境日志级别
+logging:
+  level:
+    cn.uuxl.dawn: INFO
+    org.springframework: WARN
