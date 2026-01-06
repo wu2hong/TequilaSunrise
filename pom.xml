@@ -13,8 +13,8 @@
 
     <modules>
         <module>dawn-data-access</module>
-        <module>dawn-business-service</module>
-        <module>dawn-http-service</module>
+        <module>dawn-business</module>
+        <module>dawn-web</module>
     </modules>
 
     <parent>
@@ -91,7 +91,7 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
-							<mainClass>cn.uuxl.dawn.http.DawnApplication</mainClass>
+							<mainClass>cn.uuxl.dawn.web.DawnApplication</mainClass>
                             <image>
                                 <builder>paketobuildpacks/builder-jammy-base:latest</builder>
                                 <env>
