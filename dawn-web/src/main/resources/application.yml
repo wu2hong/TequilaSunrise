@@ -2,7 +2,7 @@ spring:
   profiles:
     active: @spring.profiles.active@
   application:
-    name: dawn-project
+    name: dawn-web
   # 虚拟线程配置
   threads:
     virtual:
