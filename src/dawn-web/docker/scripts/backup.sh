@@ -3,20 +3,11 @@ set -e
 
 echo "开始备份应用..."
 
-# 1.引用 .env 文件
-if [ -f ".env" ]; then
-	source .env
-	echo ".env 文件导入成功"
-else
-	echo ".env 文件不存在"
-	exit 1
-fi
-
-# 配置变量
+# 1.配置变量
 DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_FILE="backup_$DATE.tar.gz"
-
-echo "开始备份数据库和日志文件..."
+echo "$DATE"=$DATE
+echo "$BACKUP_FILE"=$BACKUP_FILE
 
 # 2.备份 SQLite 数据库
 if [ -f "../data/app.db" ]; then
@@ -27,7 +18,7 @@ else
     echo "数据库文件不存在，跳过数据库备份"
 fi
 
-# 3.备份日志文件（保留最近7天）
+# 3.备份日志文件
 if [ -d "../logs" ]; then
     echo "打包日志文件..."
 	tar --exclude='*.tmp' -czvf ../backup/logs_$DATE.tar.gz -C .. logs/
