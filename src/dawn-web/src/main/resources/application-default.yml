@@ -4,7 +4,7 @@ server:
 
 spring:
   datasource:
-    url: ${DB_PATH:jdbc:sqlite:./database/dawn.db}
+    url: ${DB_PATH:jdbc:sqlite:../database/dawn.db}
     driver-class-name: org.sqlite.JDBC
     hikari:
       maximum-pool-size: 20
