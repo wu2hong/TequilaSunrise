@@ -7,6 +7,9 @@ spring:
   threads:
     virtual:
       enabled: true
+  # 优雅关闭配置
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
@@ -15,6 +18,11 @@ mybatis:
 
 logging:
   config: classpath:logback.xml
+
+# 服务器配置
+server:
+  # 优雅关闭配置
+  shutdown: graceful
 
 management:
   endpoints:
