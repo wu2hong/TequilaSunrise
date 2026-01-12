@@ -7,6 +7,7 @@
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
@@ -22,6 +23,7 @@
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
@@ -40,13 +42,14 @@
     </root>
 
     <!-- 应用特定包日志级别 -->
-    <logger name="cn.uuxl.dawn" level="DEBUG"/>
+    <logger name="cn.uuxl.dawn" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.mybatis" level="INFO"/>
 
     <!-- MDC traceId支持 -->
     <appender name="MDC_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}] [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
