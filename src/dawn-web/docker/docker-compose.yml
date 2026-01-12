@@ -1,0 +1,36 @@
+services:
+  java-app:
+    build:
+      context: ./temp/src
+      dockerfile: ../../Dockerfile
+      args:
+        - BUILD_PROFILE=${BUILD_MAVEN_PROFILE}
+        - JAR_NAME=${BUILD_MODULE_NAME}
+    image: ${BUILD_MODULE_NAME}:${BUILD_TAG:-latest}
+    user: "${CURRENT_UID:-1000}:${CURRENT_GID:-1000}" # 设置默认值
+    environment:
+      - SPRING_PROFILES_ACTIVE=${BUILD_MAVEN_PROFILE}
+      - DB_PATH=${DB_PATH}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JAVA_OPTS=${JAVA_OPTS}
+    ports:
+      - ${HOST_PORT}:8080
+    volumes:
+      - ./data:/app/data:rw
+      - ./config:/app/config:ro
+      - ./logs:/app/logs:rw
+      #- /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/manage/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge

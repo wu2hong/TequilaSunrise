@@ -1,0 +1,51 @@
+# ================= 第一阶段：构建阶段 =================
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
+
+WORKDIR /build
+
+# 声明构建参数（可设置默认值）
+ARG BUILD_PROFILE
+ARG JAR_NAME
+
+# 复制源码文件（利用缓存）
+COPY . .
+
+# 下载依赖（利用Docker缓存层）
+RUN chmod +x ./mvnw
+RUN ./mvnw dependency:go-offline -B
+
+# 构建项目（排除测试）
+RUN ./mvnw package -DskipTests -pl ${JAR_NAME} -am -P${BUILD_PROFILE} -B
+
+# ================= 第二阶段：运行阶段 =================
+FROM  eclipse-temurin:21-jre-jammy
+
+# 设置时区
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+ARG JAR_NAME
+
+# 创建非root用户（安全优化）
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+# 创建必要的目录
+RUN mkdir -p /app/config /app/logs /app/data && \
+    chown -R appuser:appuser /app
+
+# 从构建阶段复制jar包
+COPY --from=builder --chown=appuser:appuser /build/${JAR_NAME}/target/*.jar app.jar
+# 复制入口启动脚本
+COPY --from=builder --chown=appuser:appuser /build/${JAR_NAME}/docker/scripts/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# 切换非root用户
+USER appuser
+EXPOSE 8080
+
+# 启动命令（外部化配置）
+ENTRYPOINT ["/entrypoint.sh"]
