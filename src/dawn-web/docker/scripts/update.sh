@@ -33,7 +33,7 @@ docker compose build
 
 # 6.停止服务
 echo "停止服务..."
-docker compose down
+docker compose down -t 30
 
 # 7. 运行新容器
 echo "启动服务..."
