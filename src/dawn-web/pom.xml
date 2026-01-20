@@ -31,6 +31,29 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <!-- Default Profile: JIT 传统 JVM 镜像 -->
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <skipAot>true</skipAot>
+                <skipBuildImage>true</skipBuildImage>
+            </properties>
+        </profile>
+        
+        <!-- Native Profile: AOT 原生镜像 -->
+        <profile>
+            <id>native</id>
+            <properties>
+                <skipAot>false</skipAot>
+                <skipBuildImage>false</skipBuildImage>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -39,15 +62,41 @@
                 <configuration>
                     <mainClass>cn.uuxl.dawn.web.DawnApplication</mainClass>
                 </configuration>
-				<executions>
-					<execution>
-						<id>process-aot</id>
-						<goals>
-							<goal>process-aot</goal>
-						</goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
+                <executions>
+                    <!-- AOT 处理：仅在 native profile 时执行 -->
+                    <execution>
+                        <id>process-aot</id>
+                        <goals>
+                            <goal>process-aot</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <!-- default profile: skip=true (跳过 AOT), native profile: skip=false (执行 AOT) -->
+                            <skip>${skipAot}</skip>
+                        </configuration>
+                    </execution>
+                    <!-- build-image 执行：仅在 native profile 时构建原生镜像 -->
+                    <execution>
+                        <id>build-image</id>
+                        <goals>
+                            <goal>build-image</goal>
+                        </goals>
+                        <configuration>
+                            <!-- default profile: skip=true (跳过镜像构建), native profile: skip=false (构建原生镜像) -->
+                            <skip>${skipBuildImage}</skip>
+                            <image>
+                                <builder>paketobuildpacks/builder-jammy-base:latest</builder>
+                                <pullPolicy>IF_NOT_PRESENT</pullPolicy>
+                                <env>
+                                    <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+                                    <BP_JVM_VERSION>21</BP_JVM_VERSION>
+                                    <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
+                                    <BPE_APPEND_JAVA_TOOL_OPTIONS>-Dfile.encoding=UTF-8 -Duser.language=zh -Duser.country=CN -Dspring.profiles.active=native</BPE_APPEND_JAVA_TOOL_OPTIONS>
+                                </env>
+                            </image>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

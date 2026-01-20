@@ -45,8 +45,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>none</mainClass>
 					<classifier>execute</classifier>
+					<skip>true</skip>
 				</configuration>
 				<executions>
 					<execution>
@@ -54,7 +54,11 @@
 						<goals>
 							<goal>process-aot</goal>
 						</goals>
-						<phase>none</phase>
+						<phase>prepare-package</phase>
+						<configuration>
+							<skip>false</skip>
+							<mainClass>cn.uuxl.dawn.dal.AotBootstrap</mainClass>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

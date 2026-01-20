@@ -1,0 +1,72 @@
+# 简化版 Dockerfile：使用 Spring Boot buildpacks（推荐）
+# 此 Dockerfile 使用 Spring Boot 的 buildpacks 来构建原生镜像
+
+# 多阶段构建：Spring Boot 原生镜像
+# ================= 阶段 1: 构建 AOT 处理后的 JAR =================
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
+
+WORKDIR /build
+
+# 复制 Maven wrapper 和 pom.xml
+COPY mvnw* ./
+COPY .mvn ./.mvn
+COPY pom.xml ./
+COPY dawn-data-access/ ./
+COPY dawn-business/ ./
+COPY dawn-web/ ./
+
+# 复制源代码
+COPY dawn-data-access/src ./dawn-data-access/src
+COPY dawn-business/src ./dawn-business/src
+COPY dawn-web/src ./dawn-web/src
+
+# 执行 AOT 处理（不构建镜像）
+RUN chmod +x ./mvnw && \
+    ./mvnw clean package -Pnative -DskipTests -pl dawn-web -am "-Dspring-boot.build-image.skip=true"
+
+# ================= 阶段 2: 使用 Spring Boot 的 buildpacks 来构建原生镜像 =================
+FROM paketobuildpacks/builder-jammy-base:latest AS native-builder
+
+WORKDIR /workspace
+
+ARG JAVA_OPTS
+
+# 复制 JAR 文件（需要先通过 Maven 构建）
+COPY --from=builder /build/dawn-web/target/*.jar application.jar
+
+# 使用 buildpacks 构建原生镜像
+RUN /cnb/lifecycle/creator \
+    -app /workspace \
+    -platform /platform \
+    -cache-dir /cache \
+    -layers /layers \
+    -launch-cache /launch-cache \
+    -process-type web \
+    -env BP_NATIVE_IMAGE=true \
+    -env BP_JVM_VERSION=21 \
+    -env BPE_APPEND_JAVA_TOOL_OPTIONS=${JAVA_OPTS} \
+    dawn-web:latest
+
+# ================= 阶段 3: 运行时镜像 =================
+FROM paketobuildpacks/run-jammy-base:latest
+
+# 从构建阶段复制原生可执行文件
+COPY --from=native-builder /workspace/dawn-web /app/dawn-web
+
+WORKDIR /app
+
+ARG JAVA_OPTS
+
+# 创建必要的目录
+RUN mkdir -p /app/data /app/logs /app/config && \
+    chmod -R 755 /app
+
+# 暴露端口
+EXPOSE 8080
+
+# 设置环境变量
+ENV SPRING_PROFILES_ACTIVE=native \
+    JAVA_OPTS=${ARG JAVA_OPTS}
+
+# 运行原生可执行文件
+ENTRYPOINT ["/app/dawn-web"]

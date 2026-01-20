@@ -85,36 +85,6 @@
                 <spring.profiles.active>native</spring.profiles.active>
                 <build.image>true</build.image>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-							<mainClass>cn.uuxl.dawn.web.DawnApplication</mainClass>
-                            <image>
-                                <builder>paketobuildpacks/builder-jammy-base:latest</builder>
-                                <env>
-                                    <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-                                    <BP_JVM_VERSION>21</BP_JVM_VERSION>
-                                    <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
-                                    <BPE_APPEND_JAVA_TOOL_OPTIONS>-Dspring.profiles.active=native</BPE_APPEND_JAVA_TOOL_OPTIONS>
-                                </env>
-                            </image>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>process-aot</id>
-                                <goals>
-                                    <goal>process-aot</goal>
-                                </goals>
-								<!-- 重要：设置phase为none，防止在父模块执行 -->
-								<phase>none</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 

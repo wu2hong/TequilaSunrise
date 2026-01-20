@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "开始部署应用..."
+echo "开始更新应用================="
 
 # 1.引用 .env 文件
 if [ -f ".env" ]; then
@@ -12,26 +12,34 @@ else
 	exit 1
 fi
 
-# 2. 清理临时目录，创建其他目录
+# 2.执行备份
+echo "执行备份..."
+./backup.sh
+
+# 3. 清理临时目录，创建其他目录
 rm -rf ../temp
 mkdir -p ../temp ../logs
 
-# 3. 从GitHub克隆源码
+# 4. 从GitHub克隆源码
 echo "克隆代码库..."
 git clone --depth=1 $BUILD_GIT_URL ../temp
 
-# 4. 构建Docker镜像
+# 5. 构建Docker镜像
 echo "构建Docker镜像..."
-docker compose build
+docker compose -f ../docker-compose.yml build
 
 #拷贝配置文件
 #cp ../temp/src/$BUILD_MODULE_NAME/target/config/* ../config/
 
-# 5. 运行新容器
+# 6.停止服务
+echo "停止服务..."
+docker compose down -t 30
+
+# 7. 运行新容器
 echo "启动服务..."
 docker compose up -d
 
-# 6. 健康检查
+# 8. 健康检查
 echo "等待服务健康检查..."
 sleep 20
 
@@ -42,4 +50,4 @@ else
     docker compose logs java-app
 fi
 
-echo "部署完成！"
+echo "服务更新完成"
