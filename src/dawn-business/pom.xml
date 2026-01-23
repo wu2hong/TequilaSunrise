@@ -27,6 +27,27 @@
         </dependency>
     </dependencies>
 	
+    <profiles>
+        <!-- Default Profile: JIT 传统 JVM 模式 -->
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <skipAot>true</skipAot>
+            </properties>
+        </profile>
+        
+        <!-- Native Profile: AOT 原生模式 -->
+        <profile>
+            <id>native</id>
+            <properties>
+                <skipAot>false</skipAot>
+            </properties>
+        </profile>
+    </profiles>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -37,6 +58,7 @@
 					<skip>true</skip>
 				</configuration>
 				<executions>
+					<!-- AOT 处理：仅在 native profile 时执行 -->
 					<execution>
 						<id>process-aot</id>
 						<goals>
@@ -44,7 +66,8 @@
 						</goals>
 						<phase>prepare-package</phase>
 						<configuration>
-							<skip>false</skip>
+							<!-- default profile: skip=true (跳过 AOT), native profile: skip=false (执行 AOT) -->
+							<skip>${skipAot}</skip>
 							<mainClass>cn.uuxl.dawn.service.AotBootstrap</mainClass>
 						</configuration>
 					</execution>
