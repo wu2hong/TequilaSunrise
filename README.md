@@ -19,4 +19,4 @@ TequilaSunrise/
 
 ## 环境要求
 
-- JAVA 17+
+- JAVA 21+
