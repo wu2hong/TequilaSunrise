@@ -2,9 +2,9 @@
 
 The first personal project involves both testing new technologies and implementing the functions of a startup project.  
 
-[![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk)](...)
-[![Spring Boot Version](https://img.shields.io/badge/Spring%20Boot-3.2.12-brightgreen.svg)](https://github.com/wu2hong/TequilaSunrise)
-[![GraalVM](https://img.shields.io/badge/GraalVM-Native%20Image-FF6C37?logo=graalvm)](...)
+[![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk)](https://openjdk.org/)
+[![Spring Boot Version](https://img.shields.io/badge/Spring%20Boot-3.2.12-brightgreen.svg)](https://spring.io/)
+[![GraalVM](https://img.shields.io/badge/GraalVM-Native%20Image-FF6C37?logo=graalvm)](https://www.graalvm.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ## 目录结构
